@@ -31,5 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
-# Ignorar configs locais com secrets
-src/main/resources/application.properties
+
