@@ -1,14 +1,13 @@
-# Usar imagem oficial do Java 17
-FROM openjdk:17-jdk-slim
-
-# Definir diretório de trabalho dentro do container
+# Estágio 1: Build (Construir a aplicação)
+FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Copiar o JAR gerado pelo Maven para dentro do container
-COPY target/*.jar app.jar
-
-# Expor a porta que a aplicação vai usar
-EXPOSE 8080
-
-# Rodar a aplicação
+# Estágio 2: Run (Rodar a aplicação)
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8080 # ou a porta que sua API usa
 ENTRYPOINT ["java", "-jar", "app.jar"]
